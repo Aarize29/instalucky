@@ -55,7 +55,7 @@ const Navbar = () => {
                     Login
                 </Button>
                 <Button  onClick={loginwithinstagram}>
-                Login
+                Login with Instagram
             </Button>
                 </div>
                 :
