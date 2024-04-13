@@ -9,6 +9,21 @@ const Navbar = () => {
     const loginwithgoogle = ()=>{
         window.open("http://localhost:6005/auth/google/callback","_self")
     }
+    const loginwithinstagram = async () => {
+        try {
+            const res = await fetch("http://localhost:6005/insta/authorize", {
+                method: "GET",
+                credentials: 'include' // Include cookies in the request
+            });
+            if (res.redirected) {
+                window.location.href = res.url; // Redirect to the Instagram authorization page
+            } else {
+                throw new Error('Failed to redirect');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
     const logout = ()=>{
         window.open("http://localhost:6005/logout","_self")
     }
@@ -35,9 +50,14 @@ const Navbar = () => {
             </div>
             <div className="hidden w-full text-gray-600 md:flex md:items-center">
               {pathname === "/" ?
+                <div className="flex items-center justify-end w-full">
                 <Button  onClick={loginwithgoogle}>
                     Login
                 </Button>
+                <Button  onClick={loginwithinstagram}>
+                Login
+            </Button>
+                </div>
                 :
                 <Button  onClick={logout}>
                     Logout

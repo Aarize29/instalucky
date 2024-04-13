@@ -64,36 +64,14 @@ passport.use(
 
 
 //using instagram strategy
-passport.use(new InstagramStrategy({
-    clientID: 'YOUR_INSTAGRAM_CLIENT_ID',
-    clientSecret: 'YOUR_INSTAGRAM_CLIENT_SECRET',
-    callbackURL: 'http://localhost:5173/auth/instagram/callback',
-  }, async (accessToken, refreshToken, profile, done) => {
-    try {
-      // Check if user already exists in the database
-      let user = await User.findOne({ instagramId: profile.id });
-  
-      if (!user) {
-        // Create a new user
-        user = new User({
-          instagramId: profile.id,
-          accessToken,
-          refreshToken,
-        });
-        await user.save();
-      } else {
-        // Update access token and refresh token
-        user.accessToken = accessToken;
-        user.refreshToken = refreshToken;
-        await user.save();
-      }
-  
-      return done(null, user);
-    } catch (err) {
-      return done(err);
-    }
-  }));
-
+app.get('/insta/authorize', (req, res) => {
+    const client_id = '799729908181895';
+    const redirect_uri = 'https://instalucky-9ohubymds-aarize29s-projects.vercel.app/home';
+    const response_type = 'code';
+    const scope = 'user_profile,user_media';
+    const authorizationUrl = `https://api.instagram.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&scope=${scope}`;  
+    res.redirect(authorizationUrl);
+  });
 
 passport.serializeUser((user,done)=>{
     done(null,user);
@@ -110,6 +88,15 @@ app.get("/auth/google/callback",passport.authenticate("google",{
     successRedirect:"http://localhost:5173/home",
     failureRedirect:"http://localhost:5173/login"
 }))
+
+//initial instagram login
+app.get('/auth/instagram', passport.authenticate('instagram', { scope: ['user_profile'] }));
+
+app.get('/auth/instagram/callback', passport.authenticate('instagram', {
+    successRedirect: 'http://localhost:5173/home',
+    failureRedirect: 'http://localhost:5173/login',
+  }));
+
 
 app.get("/login/sucess",async(req,res)=>{
 
