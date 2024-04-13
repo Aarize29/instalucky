@@ -64,14 +64,15 @@ passport.use(
 
 
 //using instagram strategy
-app.get('/insta/authorize', (req, res) => {
-    const client_id = '799729908181895';
-    const redirect_uri = 'https://instalucky-9ohubymds-aarize29s-projects.vercel.app/home';
+const instagramLogin=()=>{
+    const client_id = process.env.INSTA_CLIENT_ID;
+    const redirect_uri = 'https://instalucky.vercel.app/home';
     const response_type = 'code';
     const scope = 'user_profile,user_media';
     const authorizationUrl = `https://api.instagram.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&scope=${scope}`;  
-    res.redirect(authorizationUrl);
-  });
+    
+    return authorizationUrl;
+  };
 
 passport.serializeUser((user,done)=>{
     done(null,user);
@@ -90,7 +91,9 @@ app.get("/auth/google/callback",passport.authenticate("google",{
 }))
 
 //initial instagram login
-app.get('/auth/instagram', passport.authenticate('instagram', { scope: ['user_profile'] }));
+app.get('/auth/instagram', (req, res) => {
+    res.send(instagramLogin());
+  });
 
 app.get('/auth/instagram/callback', passport.authenticate('instagram', {
     successRedirect: 'http://localhost:5173/home',

@@ -1,27 +1,26 @@
 import { Button } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
-import {useLocation } from 'react-router-dom'
+import {useLocation , useParams} from 'react-router-dom'
+import axios from 'axios'
 
 const Navbar = () => {
     const location=useLocation()
-    const {pathname} = location
-    console.log("pathname", pathname)
+    const params=useParams()
+    console.log(params)
+    
+    console.log(location)
+   const {pathname}=location
     const loginwithgoogle = ()=>{
         window.open("http://localhost:6005/auth/google/callback","_self")
     }
     const loginwithinstagram = async () => {
         try {
-            const res = await fetch("http://localhost:6005/insta/authorize", {
-                method: "GET",
-                credentials: 'include' // Include cookies in the request
-            });
-            if (res.redirected) {
-                window.location.href = res.url; // Redirect to the Instagram authorization page
-            } else {
-                throw new Error('Failed to redirect');
-            }
+            const response = await axios.get("http://localhost:6005/auth/instagram", { withCredentials: true });
+            //console.log("response", response.data)
+            window.open(response.data,"_self")
+            
         } catch (error) {
-            console.error('Error:', error);
+            console.log("error", error)
         }
     }
     const logout = ()=>{
