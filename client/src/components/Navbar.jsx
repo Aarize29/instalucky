@@ -17,16 +17,19 @@ const Navbar = () => {
     const loginwithfacebook = ()=>{
         window.open("http://localhost:6005/auth/facebook","_self")
     }
-    const loginwithinstagram = async () => {
+    const loginWithInstagram = async () => {
+        console.log(import.meta.env.VITE_INSTA_CLIENT_ID);
+       console.log(import.meta.env.VITE_REDIRECT_URI);
+
         try {
-            const response = await axios.get("http://localhost:6005/auth/instagram", { withCredentials: true });
-            //console.log("response", response.data)
-            window.open(response.data,"_self")
-            
+          const response = await axios.get(`https://api.instagram.com/oauth/authorize?client_id=${import.meta.env.VITE_INSTA_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}&scope=user_profile,user_media&response_type=code,`);
+          console.log(response);
+          // window.open(response.data,"_self");
         } catch (error) {
-            console.log("error", error)
+          console.log("error", error);
         }
-    }
+      };
+      
     const logout = ()=>{
         window.open("http://localhost:6005/logout","_self")
     }
@@ -57,7 +60,7 @@ const Navbar = () => {
                 <Button  onClick={loginwithgoogle}>
                     Login
                 </Button>
-                <Button  onClick={loginwithinstagram}>
+                <Button  onClick={loginWithInstagram}>
                 Login with Instagram
             </Button>
             <Button  onClick={loginwithfacebook}>
