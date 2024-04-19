@@ -8,10 +8,14 @@ const Navbar = () => {
     const params=useParams()
     console.log(params)
     
-    console.log(location)
+    const code=location.search.split("=")[1]
+    
    const {pathname}=location
     const loginwithgoogle = ()=>{
         window.open("http://localhost:6005/auth/google/callback","_self")
+    }
+    const loginwithfacebook = ()=>{
+        window.open("http://localhost:6005/auth/facebook","_self")
     }
     const loginwithinstagram = async () => {
         try {
@@ -55,6 +59,9 @@ const Navbar = () => {
                 </Button>
                 <Button  onClick={loginwithinstagram}>
                 Login with Instagram
+            </Button>
+            <Button  onClick={loginwithfacebook}>
+                Login with Facebook
             </Button>
                 </div>
                 :

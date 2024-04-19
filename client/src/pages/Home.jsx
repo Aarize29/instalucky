@@ -2,28 +2,41 @@ import  axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar';
 import { PaymentCard } from '../components/PaymentCard';
+import {useLocation , useParams} from 'react-router-dom'
+
+
+
 const Home = () => {
-    const [userdata, setUserdata] = useState({});
-    console.log("response", userdata)
+    const location=useLocation()    
+    const code=location.search.split("=")[1]
+    
 
-    const getUser = async () => {
-        try {
-            const response = await axios.get("http://localhost:6005/login/sucess", { withCredentials: true });
+    const handleAccessTokens = async () => {
+       const response=await fetch('http://localhost:3000/user/getaccesstokens',{
+           method:'POST',
+           headers:{
+               'Content-Type':'application/json'
+           },
+           body:JSON.stringify({
+               code:code
+           })
 
-            setUserdata(response.data.user)
-        } catch (error) {
-            console.log("error", error)
-        }
+       })
+       
+       const data=await  response.json()
+
+       console.log(data)
+       localStorage.setItem("accesstoken",data.access_token)
+       localStorage.setItem("userid",data.user_id)
+
+
     }
-
-    useEffect(() => {
-        getUser()
-    }, [])
   return (
     <div>
         <Navbar/>
         <div className='flex items-center justify-start '>
         <PaymentCard/>
+        <button onClick={handleAccessTokens}>Get Access Tokens</button>
         </div>
     </div>
   )

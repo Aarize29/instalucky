@@ -8,6 +8,7 @@ const session = require("express-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 const InstagramStrategy = require('passport-instagram').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 const userdb = require("./model/userSchema")
 
 const clientid = process.env.GOOGLE_CLIENT_ID;
@@ -62,6 +63,33 @@ passport.use(
     )
 )
 
+//using facebook strategy
+passport.use(new FacebookStrategy({
+    clientID: process.env.FB_CLIENT_ID,
+    clientSecret: process.env.FB_CLIENT_SECRET,
+    callbackURL: 'localhost:5173/home',
+    profileFields: ['id', 'displayName', 'photos', 'email'],
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      let user = await userdb.findOne({ facebookId: profile.id });
+      if (!user) {
+        user = new userdb({
+          facebookId: profile.id,
+          displayName: profile.displayName,
+          email: profile.emails[0].value,
+          image: profile.photos[0].value,
+          accessToken: accessToken,
+        });
+        await user.save();
+      }
+      return done(null, user);
+    } catch (error) {
+      return done(error, null);
+    }
+  },
+));
+
 
 //using instagram strategy
 const instagramLogin=()=>{
@@ -85,10 +113,20 @@ passport.deserializeUser((user,done)=>{
 // initial google ouath login
 app.get("/auth/google",passport.authenticate("google",{scope:["profile","email"]}));
 
+
 app.get("/auth/google/callback",passport.authenticate("google",{
     successRedirect:"http://localhost:5173/home",
     failureRedirect:"http://localhost:5173/login"
 }))
+
+//initial facebook login
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+    successRedirect: 'http://localhost:5173/home',
+    failureRedirect: 'http://localhost:5173/login',
+  }));
+  
 
 //initial instagram login
 app.get('/auth/instagram', (req, res) => {
