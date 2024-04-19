@@ -1,11 +1,24 @@
-import React from 'react';
-import dataset from '../data.json';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Posts = () => {
+  const [dataset,setDataset]=useState([])
+  const accesstoken=localStorage.getItem('accesstoken')
+  const userid=localStorage.getItem('userid')
+  const getMediaData=async()=>{
+    const res= await axios.get(`https://graph.instagram.com/${userid}/media?fields=id,caption,media_type,media_url&access_token=${accesstoken}`)
+
+    console.log(res.data.data)
+    setDataset(res.data.data)
+  }
+  useEffect(() => {
+    getMediaData()
+  }, [])
+  
   return (
     <div className="container mx-auto py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {dataset.data.map((post, index) => (
+        {dataset.map((post, index) => (
           <div key={index} className="bg-white shadow-md rounded-lg overflow-hidden">
             {post.media_type === 'video' ? (
               <iframe
@@ -26,7 +39,7 @@ const Posts = () => {
             </div>
           </div>
         ))}
-      </div>
+      </div> 
     </div>
   );
 };
