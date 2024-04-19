@@ -1,6 +1,6 @@
 import { Button } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
-import {useLocation , useParams} from 'react-router-dom'
+import {useLocation , useNavigate, useParams} from 'react-router-dom'
 import axios from 'axios'
 
 const Navbar = () => {
@@ -31,8 +31,10 @@ const Navbar = () => {
          window.open(data,"_self")
     }
       
+    const navigate=useNavigate()
     const logout = ()=>{
-        window.open("http://localhost:6005/logout","_self")
+        localStorage.clear()
+        navigate("/")
     }
 
     const [user, setUser] = useState({})
