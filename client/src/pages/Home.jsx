@@ -31,12 +31,16 @@ const Home = () => {
 
 
     }
+    useEffect(() => {
+      handleAccessTokens()
+    }, [])
+    
   return (
     <div>
         <Navbar/>
         <div className='flex items-center justify-start '>
         <PaymentCard/>
-        <button onClick={handleAccessTokens}>Get Access Tokens</button>
+        {/* <button onClick={handleAccessTokens}>Get Access Tokens</button> */}
         </div>
     </div>
   )
