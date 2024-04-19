@@ -18,17 +18,18 @@ const Navbar = () => {
         window.open("http://localhost:6005/auth/facebook","_self")
     }
     const loginWithInstagram = async () => {
-        console.log(import.meta.env.VITE_INSTA_CLIENT_ID);
-       console.log(import.meta.env.VITE_REDIRECT_URI);
+       const res=await fetch("http://localhost:3000/user/auth/instagram",{
+              method:"GET",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                withCredentials:false
 
-        try {
-          const response = await axios.get(`https://api.instagram.com/oauth/authorize?client_id=${import.meta.env.VITE_INSTA_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}&scope=user_profile,user_media&response_type=code,`);
-          console.log(response);
-          // window.open(response.data,"_self");
-        } catch (error) {
-          console.log("error", error);
-        }
-      };
+       })
+
+         const data=await res.json()
+         window.open(data,"_self")
+    }
       
     const logout = ()=>{
         window.open("http://localhost:6005/logout","_self")
@@ -57,15 +58,11 @@ const Navbar = () => {
             <div className="hidden w-full text-gray-600 md:flex md:items-center">
               {pathname === "/" ?
                 <div className="flex items-center justify-end w-full">
-                <Button  onClick={loginwithgoogle}>
-                    Login
-                </Button>
+                
                 <Button  onClick={loginWithInstagram}>
                 Login with Instagram
             </Button>
-            <Button  onClick={loginwithfacebook}>
-                Login with Facebook
-            </Button>
+           
                 </div>
                 :
                 <Button  onClick={logout}>

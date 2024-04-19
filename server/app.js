@@ -93,13 +93,29 @@ passport.use(new FacebookStrategy({
 
 //using instagram strategy
 const instagramLogin=()=>{
-    const client_id = process.env.INSTA_CLIENT_ID;
-    const redirect_uri = 'https://instalucky.vercel.app/home';
-    const response_type = 'code';
-    const scope = 'user_profile,user_media';
-    const authorizationUrl = `https://api.instagram.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&scope=${scope}`;  
-    
-    return authorizationUrl;
+    return new InstagramStrategy({
+        clientID: process.env.INSTA_CLIENT_ID,
+        clientSecret: process.env.INSTA_CLIENT_SECRET,
+        callbackURL: 'https://instalucky.vercel.app/home',
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          let user = await userdb.findOne({ instagramId: profile.id });
+          if (!user) {
+            user = new userdb({
+              instagramId: profile.id,
+              displayName: profile.username,
+              image: profile._json.data.profile_picture,
+              accessToken: accessToken,
+            });
+            await user.save();
+          }
+          return done(null, user);
+        } catch (error) {
+          return done(error, null);
+        }
+      },
+    );
   };
 
 passport.serializeUser((user,done)=>{
@@ -130,7 +146,8 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', {
 
 //initial instagram login
 app.get('/auth/instagram', (req, res) => {
-    res.send(instagramLogin());
+    passport.use(instagramLogin());
+    passport.authenticate('instagram')(req, res);
   });
 
 app.get('/auth/instagram/callback', passport.authenticate('instagram', {
