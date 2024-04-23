@@ -28,6 +28,7 @@ const Navbar = () => {
        })
 
          const data=await res.json()
+         console.log(data)
          window.open(data,"_self")
     }
       
