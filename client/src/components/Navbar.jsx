@@ -52,11 +52,9 @@ const Navbar = () => {
      <div className="bg-white shadow-lg">
         <div className="container mx-auto px-6 py-3">
             <div className="flex items-center justify-between">
-            <div className="hidden w-full text-gray-600 md:flex md:items-center">
-                <span>Logo</span>
-            </div>
+           
             <div className="w-full text-gray-700 md:text-center text-2xl font-semibold">
-                App-name
+                InstaLucky
             </div>
             <div className="hidden w-full text-gray-600 md:flex md:items-center">
               {pathname === "/" ?

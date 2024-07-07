@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@material-tailwind/react';
@@ -64,8 +64,39 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getMediaData();
-  }, []);
+    if (!loading) {
+      getMediaData();
+    }
+  }, [loading]);
+
+  //console.log(dataset);
+  useEffect(() => {
+    const getSentiments = async () => {
+      if (dataset.length > 0) {
+        try {
+          const res = await fetch("https://instasight-api.azurewebsites.net/api/ai-sentiment", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          
+            body: JSON.stringify(dataset)
+          });
+          const data = await res.json();
+          console.log(data)
+          const updatedDataset = dataset.map((item, index) => ({
+            ...item,
+            sentiments: data[index].sentiments // Assuming the response data structure
+          }));
+          setDataset(updatedDataset);
+        } catch (error) {
+          console.log('Error fetching sentiments:', error);
+        }
+      }
+    };
+    getSentiments();
+  }, [dataset]);
+  
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -110,7 +141,7 @@ const Home = () => {
           <thead>
             <tr>
               <th className="py-2 px-4 border-b border-gray-200">Comment</th>
-              <th className="py-2 px-4 border-b border-gray-200">Hello</th>
+              <th className="py-2 px-4 border-b border-gray-200">Sentiments</th>
             </tr>
           </thead>
           <tbody>
@@ -118,7 +149,7 @@ const Home = () => {
               selectedComments.map((comment, index) => (
                 <tr key={index}>
                   <td className="py-2 px-4 border-b border-gray-200">{comment.text}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">Hello</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{comment.sentiments}</td>
                 </tr>
               ))
             ) : (

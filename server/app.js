@@ -16,7 +16,7 @@ app.use(session({
     cookie:{secure:false}
 }));
 
-connectDB();
+//connectDB();
 
 app.use('/user', userRouter);
 app.use('/user',getaccesstokens)
