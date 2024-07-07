@@ -10,7 +10,7 @@ const Posts = () => {
 
   const getMediaData = async () => {
     try {
-      const res = await axios.get(`https://graph.facebook.com/v19.0/${userid}/media?fields=id,media_type,media_url,like_count,thumbnail_url,permalink,username,owner,comments_count,caption,timestamp&access_token=${accesstoken}`);
+      const res = await axios.get(`https://graph.facebook.com/v19.0/${userid}/media?fields=id,media_type,media_url,like_count,thumbnail_url,permalink,username,owner,comments_count,comments,caption,timestamp&access_token=${accesstoken}`);
       console.log(res.data.data);
       setDataset(res.data.data);
     } catch (error) {
@@ -21,7 +21,8 @@ const Posts = () => {
   useEffect(() => {
     getMediaData();
   }, []);
-
+   
+  //console.log(dataset)
   return (
     <>
       
