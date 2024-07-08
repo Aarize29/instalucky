@@ -106,7 +106,7 @@ const Home = () => {
       <Navbar />
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-center items-center mb-4">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome to Your Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Welcome to the Dashboard</h1>
         </div>
         <div className="flex justify-center mb-4">
           <Button><Link to="/posts">View Posts</Link></Button>
