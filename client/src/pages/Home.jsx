@@ -70,11 +70,13 @@ const Home = () => {
   }, [loading]);
 
   //console.log(dataset);
+
+  const [finalData, setFinalData] = useState([]);
   useEffect(() => {
     const getSentiments = async () => {
       if (dataset.length > 0) {
         try {
-          const res = await fetch("https://instasight-api.azurewebsites.net/api/ai-sentiment", {
+          const res = await fetch("https://insta-sight-api.azurewebsites.net/api/ai-sentiment", {
             method: "POST",
             headers: {
               'Content-Type': 'application/json'
@@ -84,6 +86,7 @@ const Home = () => {
           });
           const data = await res.json();
           console.log(data)
+          setFinalData(data);
           const updatedDataset = dataset.map((item, index) => ({
             ...item,
             sentiments: data[index].sentiments // Assuming the response data structure
@@ -117,7 +120,7 @@ const Home = () => {
             </tr>
           </thead>
           <tbody>
-            {dataset.map((item) => (
+            {finalData.map((item) => (
               <tr key={item.id}>
                 <td className="py-2 px-4 border-b border-gray-200">{item.id}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{item.caption}</td>
@@ -142,6 +145,7 @@ const Home = () => {
             <tr>
               <th className="py-2 px-4 border-b border-gray-200">Comment</th>
               <th className="py-2 px-4 border-b border-gray-200">Sentiments</th>
+              <th className='py-2 px-4 border-b border-gray-200'>Emoji</th>
             </tr>
           </thead>
           <tbody>
@@ -149,7 +153,8 @@ const Home = () => {
               selectedComments.map((comment, index) => (
                 <tr key={index}>
                   <td className="py-2 px-4 border-b border-gray-200">{comment.text}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{comment.sentiments}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{comment.sentiment}</td>
+                  {comment.sentiment==="positive" ? <td className="py-2 px-4 border-b border-gray-200">😊</td> : comment.sentiment==="negative" ? <td className="py-2 px-4 border-b border-gray-200">😔</td> : <td className="py-2 px-4 border-b border-gray-200">😐</td>}
                 </tr>
               ))
             ) : (
